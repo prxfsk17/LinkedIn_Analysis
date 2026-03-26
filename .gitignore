@@ -1,0 +1,6 @@
+.env
+vacancies_warsaw.csv
+__pycache__/
+*.pyc
+.venv/
+venv/
