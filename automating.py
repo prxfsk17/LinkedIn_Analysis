@@ -13,7 +13,7 @@ from selenium.webdriver.remote.webelement import WebElement
 from dotenv import load_dotenv
 
 from config import Config
-from selectors import LoginSelectors, JobListSelectors, JobDetailSelectors
+from css_selectors import LoginSelectors, JobListSelectors, JobDetailSelectors
 from extractors import extract_work_details, extract_seniority_from_text, extract_tech_skills
 from utils import random_delay, save_to_csv
 

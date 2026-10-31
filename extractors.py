@@ -123,6 +123,10 @@ def extract_seniority_from_text(text: Optional[str]) -> Optional[str]:
 
     return None
 
+def _contains(text: str, keyword: str) -> bool:
+    """Whole-word match: 'java' does not match 'javascript'."""
+    pattern = r'(?<![a-z0-9])' + re.escape(keyword.strip()) + r'(?![a-z0-9])'
+    return re.search(pattern, text) is not None
 
 def extract_tech_skills(text: str) -> Dict[str, bool]:
     """
@@ -157,11 +161,10 @@ def extract_tech_skills(text: str) -> Dict[str, bool]:
         'react': ['react', 'react.js', 'reactjs', 'next.js', 'nextjs', 'redux'],
         'angular': ['angular', 'angular.js', 'angularjs', 'ngx'],
         'vue': ['vue', 'vue.js', 'vuejs', 'nuxt', 'nuxt.js'],
-        'html_css': ['html', 'css', 'html5', 'css3', 'sass', 'scss', 'less', 'tailwind', 'bootstrap', 'flexbox',
-                     'grid'],
+        'html_css': ['html', 'css', 'html5', 'css3', 'sass', 'scss', 'tailwind', 'bootstrap', 'flexbox'],
         'nodejs': ['node.js', 'nodejs', 'express', 'express.js', 'nest.js', 'nestjs'],
         'graphql': ['graphql', 'apollo', 'relay'],
-        'rest': ['rest', 'restful', 'rest api', 'restful api'],
+        'rest': ['rest api'],
         'postgresql': ['postgresql', 'postgres', 'pl/pgsql'],
         'mysql': ['mysql', 'mariadb'],
         'oracle': ['oracle', 'pl/sql'],
@@ -252,19 +255,6 @@ def extract_tech_skills(text: str) -> Dict[str, bool]:
     }
 
     result: Dict[str, bool] = {}
-
     for skill, keywords in tech_stack.items():
-        found: bool = False
-        for keyword in keywords:
-            if len(keyword) <= 3 and keyword.isalpha():
-                pattern: str = r'\b' + re.escape(keyword) + r'\b'
-                if re.search(pattern, text_lower):
-                    found = True
-                    break
-            else:
-                if keyword in text_lower:
-                    found = True
-                    break
-        result[skill] = found
-
+        result[skill] = any(_contains(text_lower, kw) for kw in keywords)
     return result
