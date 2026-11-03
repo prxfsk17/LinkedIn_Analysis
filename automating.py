@@ -19,7 +19,7 @@ from utils import random_delay, save_to_csv
 
 
 class Driver:
-    """LinkedIn job scraper for Warsaw Python-related positions."""
+    """LinkedIn job scraper for Warsaw software engineering positions."""
 
     def __init__(self) -> None:
         """Initialize the driver with Chrome options and load environment variables."""
@@ -116,8 +116,18 @@ class Driver:
         Returns:
             Found WebElement
         """
+
+        def find_visible_element(driver):
+            elements = driver.find_elements(by, value)
+
+            for element in elements:
+                if element.is_displayed() and element.is_enabled():
+                    return element
+
+            return False
+
         return WebDriverWait(self.driver, timeout).until(
-            EC.element_to_be_clickable((by, value))
+            find_visible_element
         )
 
     def login(self) -> Optional[str]:
